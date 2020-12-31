@@ -15,11 +15,10 @@ Project dependencies:
     The results are tab delimited, so can be copied to a spreadsheet for printing/sharing.
     
 Example result:
-
-Team Not here
-2020-12-31 11:09:53.710217
--------------------------
-Player Name                   	Season Ave	Games     	Proj Pts   	Injury Report
+Team Not here<br>
+2020-12-31 11:09:53.710217<br>
+-------------------------<br>
+Player Name                   	Season Ave	Games     	Proj Pts   	Injury Report<br>
 CJ McCollum                   	53.33     	3         	159.98    	
 Jrue Holiday                  	39.04     	4         	156.16    	
 Russell Westbrook             	50.80     	3         	152.40    	
