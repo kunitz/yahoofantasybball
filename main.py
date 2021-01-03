@@ -8,8 +8,8 @@ import threading
 import time
 from datetime import datetime
 
-from yahoofantasybball.NBAFantasyAPI import NBAFantasy, NBAPlayer
-from yahoofantasybball.fantasybasketballnerd import FantastyBasketballNerd
+from NBAFantasyAPI import NBAFantasy, NBAPlayer
+from fantasybasketballnerd import FantastyBasketballNerd
 
 def dotsOnTheUI():
     global stopdots
@@ -44,12 +44,16 @@ def write_player_line(name, games_this_week, seasonpoints, gamesplayed, injuryre
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    #debug stuff
+    #NBAFantasy.statsdisable = True
+    week = "next" #use this to manually configure week from 1.. "current" and "next" are also supported.
+    ####
     thread = threading.Thread(target=dotsOnTheUI,args=())
     print("Collecting Team Info...")
     thread.start()
     log = logging.getLogger('yfpy.query') #the logger in this file isn't turning off in non-debug mode.
     log.disabled = True
-    League = NBAFantasy()
+    League = NBAFantasy(week)
     SchedLeague = FantastyBasketballNerd()
     teams = League.get_teams()
     teamindex = -1

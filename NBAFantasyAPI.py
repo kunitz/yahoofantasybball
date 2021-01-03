@@ -1,6 +1,7 @@
 ## Logan Kunitz
 ## API for analyzing NBA Fantasy
-
+import math
+from datetime import datetime, timedelta
 
 from yfpy import YahooFantasySportsQuery
 
@@ -30,11 +31,13 @@ class NBATeam:
     id = ""
 
 class YahooLeagueData:
+    statsdisable = False
     players = list() #fill with datatype NBAPlayer
     teams = list() #fill with datatype NBATeam
 
-    def __init__(self):
+    def __init__(self, week="next"):
         #todo - update this with your own fantasy league values
+        self.week = week
         consumer_key = "dj0yJmk9RU5nY0M3aGNuWVVQJmQ9WVdrOWMwODRlbk4xUVZNbWNHbzlNQT09JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWQ3",
         consumer_secret = "b84c5592dbecc76e2979c068c5950d8b39561b33",
         self.yahoo_data = self.initialize_yahoo('45255', consumer_key, consumer_secret, 'nba', '2020')
@@ -54,7 +57,7 @@ class YahooLeagueData:
             #for m in teammatchup:
             #    for t2 in m["matchup"].teams:
             #        pass
-            team.players = self.getteamroster(t["team"].team_id)
+            team.players = self.getteamroster(t["team"].team_id, self.week)
             teams.append(team)
         return teams
 
@@ -62,18 +65,30 @@ class YahooLeagueData:
         return self.yahoo_data.get_all_yahoo_fantasy_game_keys()
 
     def getplayerstats(self, player_key):
-        #return self.yahoo_data.get_player_stats_by_week(player_key,0)
-        return self.yahoo_data.get_player_stats_for_season(player_key)
+        #stats = self.yahoo_data.get_player_stats_by_week(player_key, 1)
+        #stats = self.yahoo_data.get_player_stats_by_date(player_key)
+        stats = self.yahoo_data.get_player_stats_for_season(player_key)
+        return stats
 
-    def getteamroster(self,team_id):
-        yahooroster = self.yahoo_data.get_team_roster_by_week(team_id)
+
+    def getteamroster(self,team_id,week="next"):
+        week_param = week
+        if week == "next":
+            yahooroster = self.yahoo_data.get_team_roster_by_week(team_id, "1")
+            initialweek = yahooroster.extracted_data["date"]
+            date = datetime.strptime(initialweek, '%Y-%m-%d')  # format: 2020-12-22 19:00:00
+            oneweek = timedelta(days=7)
+            week_param = math.ceil((datetime.today() - date) / oneweek) + 1
+        yahooroster = self.yahoo_data.get_team_roster_by_week(team_id, week_param)
         #yahooroster = self.yahoo_data.get_team_roster_player_info_by_week(team_id, 0)
         players = list()
 
         for p in yahooroster.players:
             player = NBAPlayer()
             player_name = p["player"].name.full
-            player.seasonpoints = self.getplayerstats(p["player"].player_key).player_points_value
+            if not self.statsdisable:
+                playerstats = self.getplayerstats(p["player"].player_key)
+                player.seasonpoints = playerstats.player_points_value
             player.new(player_name)
             players.append(player)
         return players
@@ -151,9 +166,11 @@ class YahooLeagueData:
 
 
 class NBAFantasy:
+    statsdisable = False
 
-    def __init__(self):
-        self.yahoodata = YahooLeagueData()
+    def __init__(self, week="next"):
+        YahooLeagueData.statsdisable = self.statsdisable
+        self.yahoodata = YahooLeagueData(week)
         pass
 
     def get_player_from_name(self, first, last) -> NBAPlayer:
