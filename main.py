@@ -31,14 +31,16 @@ def printDate():
 
 
 def write_header():
-    print(addwhitespace("Player Name", 30) + "\t" + addwhitespace("Season Ave",10) + "\t" +
+    print(addwhitespace("Player Name", 40) + "\t" + addwhitespace("Position",10) + "\t" + addwhitespace("Season Ave",10) + "\t" +
           addwhitespace("Games", 10) + "\t" + addwhitespace("Proj Pts",10), "\t" + "Injury Report")
 
 
-def write_player_line(name, games_this_week, seasonpoints, gamesplayed, injuryreport):
+def write_player_line(name, games_this_week, seasonpoints, gamesplayed, injuryreport, positions, selected_position):
     averagepoints = seasonpoints / gamesplayed
     proj_points = averagepoints * games_this_week
-    print(addwhitespace(name, 30) + "\t" + addwhitespace("%.2f" % averagepoints, 10) + "\t" + addwhitespace(
+    printpositions = ",".join(positions)
+    printname = name + "(" + printpositions + ")"
+    print(addwhitespace(printname, 40) + "\t" + addwhitespace(selected_position, 10) + "\t" + addwhitespace("%.2f" % averagepoints, 10) + "\t" + addwhitespace(
         str(games_this_week), 10) + "\t" + addwhitespace("%.2f" % proj_points,
                                                          10) + "\t" + injuryreport)
 
@@ -77,7 +79,7 @@ if __name__ == '__main__':
                     seasonpoints = player.seasonpoints
                     gamesplayed = SchedLeague.numberPlayerGamesPlayed(player.name)
                     write_player_line(player.name, games_this_week, seasonpoints, gamesplayed,
-                                      SchedLeague.getPlayerInjured(player.name))
+                                      SchedLeague.getPlayerInjured(player.name), player.positions, player.selected_position)
                 print("-------------------------")
                 print("")
         iteration+=1

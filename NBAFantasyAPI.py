@@ -10,6 +10,7 @@ class NBAPlayer:
         #public data
         self.name = ""
         self.positions = list()
+        self.selected_position = ""
         self.ownerteam = ""
         self.seasonpoints = 0
         #private data
@@ -89,7 +90,11 @@ class YahooLeagueData:
             if not self.statsdisable:
                 playerstats = self.getplayerstats(p["player"].player_key)
                 player.seasonpoints = playerstats.player_points_value
-            player.new(player_name)
+            player.selected_position = p['player'].selected_position_value
+            positions = list()
+            for i in p['player'].eligible_positions:
+                positions.append(i['position'])
+            player.new(player_name, positions)
             players.append(player)
         return players
 
