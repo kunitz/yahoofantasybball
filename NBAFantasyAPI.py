@@ -79,7 +79,7 @@ class YahooLeagueData:
             initialweek = yahooroster.extracted_data["date"]
             date = datetime.strptime(initialweek, '%Y-%m-%d')  # format: 2020-12-22 19:00:00
             oneweek = timedelta(days=7)
-            week_param = math.ceil((datetime.today() - date) / oneweek) + 1
+            week_param = math.ceil((datetime.today() - date) / oneweek) + 2  #apparently the first week starts at 2.
         yahooroster = self.yahoo_data.get_team_roster_by_week(team_id, week_param)
         #yahooroster = self.yahoo_data.get_team_roster_player_info_by_week(team_id, 0)
         players = list()
